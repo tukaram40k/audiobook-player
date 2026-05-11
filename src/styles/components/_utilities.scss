@@ -1,0 +1,6 @@
+@use './variables' as *;
+
+.muted {
+  color: $color-text-muted;
+  font-size: 0.9rem;
+}

@@ -1,0 +1,21 @@
+@use './variables' as *;
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 260px;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 1.75rem;
+}
+
+@media (max-width: 900px) {
+  .app-body {
+    grid-template-columns: 1fr;
+  }
+}

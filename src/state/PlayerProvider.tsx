@@ -13,19 +13,17 @@ type PlayerProviderProps = PropsWithChildren<{
   api?: PlayerApi
 }>
 
-const ensureAudio = (audioRef: React.MutableRefObject<HTMLAudioElement | null>) => {
-  if (!audioRef.current) {
-    const audio = new Audio()
-    audio.preload = 'metadata'
-    audioRef.current = audio
-  }
-
-  return audioRef.current
-}
-
 export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  ensureAudio(audioRef)
+  const ensureAudio = useCallback(() => {
+    if (!audioRef.current) {
+      const audio = new Audio()
+      audio.preload = 'metadata'
+      audioRef.current = audio
+    }
+
+    return audioRef.current
+  }, [])
 
   const { currentBook, currentBookId } = useLibrary()
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
@@ -59,7 +57,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
 
   const loadTrack = useCallback(
     async (track: Track, options?: { autoPlay?: boolean }) => {
-      const audio = audioRef.current
+      const audio = ensureAudio()
       if (!audio) {
         return
       }
@@ -82,7 +80,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
         }
       }
     },
-    [],
+    [ensureAudio],
   )
 
   const playTrack = useCallback(
@@ -93,7 +91,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
   )
 
   const play = useCallback(async () => {
-    const audio = audioRef.current
+    const audio = ensureAudio()
     if (!audio) {
       return
     }
@@ -112,20 +110,20 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
     } catch {
       setIsPlaying(false)
     }
-  }, [currentBook, currentTrack, loadTrack])
+  }, [currentBook, currentTrack, ensureAudio, loadTrack])
 
   const pause = useCallback(() => {
-    const audio = audioRef.current
+    const audio = ensureAudio()
     if (!audio) {
       return
     }
 
     audio.pause()
     persistPosition(audio.currentTime, true)
-  }, [persistPosition])
+  }, [ensureAudio, persistPosition])
 
   const toggle = useCallback(async () => {
-    const audio = audioRef.current
+    const audio = ensureAudio()
     if (!audio) {
       return
     }
@@ -135,11 +133,11 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
     } else {
       pause()
     }
-  }, [pause, play])
+  }, [ensureAudio, pause, play])
 
   const seek = useCallback(
     (seconds: number) => {
-      const audio = audioRef.current
+      const audio = ensureAudio()
       if (!audio || !Number.isFinite(seconds)) {
         return
       }
@@ -149,7 +147,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
       setCurrentTime(nextTime)
       persistPosition(nextTime, true)
     },
-    [persistPosition],
+    [ensureAudio, persistPosition],
   )
 
   const resolveAdjacentTrack = useCallback(
@@ -194,7 +192,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
   }, [currentTime, isPlaying, moveToAdjacent, seek])
 
   useEffect(() => {
-    const audio = audioRef.current
+    const audio = ensureAudio()
     if (!audio) {
       return
     }
@@ -236,7 +234,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
       audio.removeEventListener('pause', handlePause)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [moveToAdjacent, persistPosition])
+  }, [ensureAudio, moveToAdjacent, persistPosition])
 
   const value = useMemo<PlayerContextValue>(
     () => ({

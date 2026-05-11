@@ -1,0 +1,35 @@
+@use './variables' as *;
+
+.button {
+  border: none;
+  border-radius: $radius-pill;
+  padding: 0.5rem 1.1rem;
+  background: $color-accent;
+  color: $color-panel-contrast;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  box-shadow: $shadow-button;
+
+  &:hover {
+    background: $color-accent-dark;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &--ghost {
+    background: $button-ghost-bg;
+    color: $color-accent;
+    box-shadow: none;
+
+    &:hover {
+      background: $button-ghost-hover;
+    }
+  }
+}

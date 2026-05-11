@@ -1,53 +1,22 @@
+import BookSidebar from './components/BookSidebar'
+import PlayerView from './components/PlayerView'
+import TopBar from './components/TopBar'
+import TrackSidebar from './components/TrackSidebar'
 import { LibraryProvider } from './state/LibraryProvider'
 import { PlayerProvider } from './state/PlayerProvider'
-import { useLibrary } from './state/useLibrary'
-
-const LibraryPreview = () => {
-  const { books, currentBook, isLoading, error, openFolder, selectBook } = useLibrary()
-
-  return (
-    <div>
-      <h1>Audiobook Player</h1>
-      <button type="button" onClick={() => void openFolder()}>
-        Open Folder
-      </button>
-      {isLoading ? (
-        <p>Loading library...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : (
-        <div>
-          <h2>Books</h2>
-          <ul>
-            {books.map((book) => (
-              <li key={book.id}>
-                <button type="button" onClick={() => selectBook(book.id)}>
-                  {book.title}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <h2>Tracks</h2>
-          {currentBook ? (
-            <ol>
-              {currentBook.tracks.map((track) => (
-                <li key={track.id}>{track.title}</li>
-              ))}
-            </ol>
-          ) : (
-            <p>No book selected.</p>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
 
 const App = () => {
   return (
     <LibraryProvider>
       <PlayerProvider>
-        <LibraryPreview />
+        <div className="app-shell">
+          <TopBar />
+          <div className="app-body">
+            <BookSidebar />
+            <PlayerView />
+            <TrackSidebar />
+          </div>
+        </div>
       </PlayerProvider>
     </LibraryProvider>
   )

@@ -1,4 +1,5 @@
 import { LibraryProvider } from './state/LibraryProvider'
+import { PlayerProvider } from './state/PlayerProvider'
 import { useLibrary } from './state/useLibrary'
 
 const LibraryPreview = () => {
@@ -45,7 +46,9 @@ const LibraryPreview = () => {
 const App = () => {
   return (
     <LibraryProvider>
-      <LibraryPreview />
+      <PlayerProvider>
+        <LibraryPreview />
+      </PlayerProvider>
     </LibraryProvider>
   )
 }

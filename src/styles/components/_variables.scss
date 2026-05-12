@@ -10,8 +10,14 @@ $color-accent-soft: var(--color-accent-soft);
 $color-border: var(--color-border);
 $color-shadow: var(--color-shadow);
 
-$radius-panel: 16px;
-$radius-pill: 999px;
+$slider-track: var(--slider-track);
+$slider-track-border: var(--slider-track-border);
+$slider-fill: var(--slider-fill);
+$slider-thumb: var(--slider-thumb);
+$slider-thumb-border: var(--slider-thumb-border);
+
+$radius-button: 8px;
+$radius-panel: 12px;
 
 $topbar-bg: var(--topbar-bg);
 $border-subtle: var(--border-subtle);

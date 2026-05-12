@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import BookSidebar from './components/BookSidebar'
 import PlayerView from './components/PlayerView'
+import SettingsModal from './components/SettingsModal'
 import TopBar from './components/TopBar'
 import TrackSidebar from './components/TrackSidebar'
 import { LibraryProvider } from './state/LibraryProvider'
@@ -23,17 +24,33 @@ const App = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+  const openSettings = () => {
+    setIsSettingsOpen(true)
+  }
+
+  const closeSettings = () => {
+    setIsSettingsOpen(false)
+  }
+
   return (
     <LibraryProvider>
       <PlayerProvider>
         <div className="app-shell">
-          <TopBar theme={theme} onToggleTheme={toggleTheme} />
+          <TopBar onOpenSettings={openSettings} />
           <div className="app-body">
             <BookSidebar />
             <PlayerView />
             <TrackSidebar />
           </div>
         </div>
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={closeSettings}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
       </PlayerProvider>
     </LibraryProvider>
   )

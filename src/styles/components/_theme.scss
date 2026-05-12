@@ -26,6 +26,11 @@
   --shadow-panel: 0 12px 30px rgba(27, 29, 35, 0.08);
   --shadow-button: 0 6px 12px rgba(27, 29, 35, 0.18);
 
+  --slider-track: rgba(33, 37, 43, 0.18);
+  --slider-fill: var(--color-accent);
+  --slider-thumb: var(--color-accent);
+  --slider-thumb-border: var(--color-accent);
+
   color-scheme: light;
 }
 
@@ -54,8 +59,14 @@
   --button-ghost-bg: rgba(71, 140, 191, 0.18);
   --button-ghost-hover: rgba(71, 140, 191, 0.28);
 
-  --shadow-panel: 0 12px 30px rgba(0, 0, 0, 0.45);
-  --shadow-button: 0 6px 14px rgba(0, 0, 0, 0.35);
+  --shadow-panel: 0 6px 14px rgba(0, 0, 0, 0.45);
+  --shadow-button: none;
+
+  --slider-track: #3a424f;
+  --slider-track-border: rgba(224, 224, 224, 0.3);
+  --slider-fill: var(--color-accent);
+  --slider-thumb: var(--color-accent);
+  --slider-thumb-border: var(--color-accent);
 
   color-scheme: dark;
 }

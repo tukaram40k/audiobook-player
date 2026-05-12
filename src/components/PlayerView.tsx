@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { usePlayer } from '../state/usePlayer'
 
 const formatTime = (value: number) => {
@@ -26,6 +27,8 @@ const PlayerView = () => {
   const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : 0
   const clampedTime = Math.min(currentTime, safeDuration)
   const sliderMax = safeDuration > 0 ? safeDuration : 1
+  const progress = safeDuration > 0 ? (clampedTime / safeDuration) * 100 : 0
+  const sliderStyle = { '--seek-progress': `${progress}%` } as CSSProperties
 
   return (
     <section className="panel player-view">
@@ -51,6 +54,7 @@ const PlayerView = () => {
           min={0}
           max={sliderMax}
           value={clampedTime}
+          style={sliderStyle}
           onChange={(event) => seek(Number(event.currentTarget.value))}
           disabled={!currentTrack || !isReady}
         />

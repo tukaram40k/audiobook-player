@@ -1,10 +1,16 @@
 import { useLibrary } from '../state/useLibrary'
 
-const TopBar = () => {
+type TopBarProps = {
+  theme: 'light' | 'dark'
+  onToggleTheme: () => void
+}
+
+const TopBar = ({ theme, onToggleTheme }: TopBarProps) => {
   const { currentBook, isLoading, openFolder } = useLibrary()
   const subtitle = currentBook
     ? `${currentBook.author ?? 'Unknown author'}${currentBook.narrator ? ` • ${currentBook.narrator}` : ''}`
     : 'Select a book to begin'
+  const themeLabel = theme === 'dark' ? 'Light mode' : 'Dark mode'
 
   return (
     <header className="app-topbar">
@@ -14,6 +20,14 @@ const TopBar = () => {
         <span className="app-subtitle">{subtitle}</span>
       </div>
       <div className="app-actions">
+        <button
+          className="button button--ghost"
+          type="button"
+          onClick={onToggleTheme}
+          aria-pressed={theme === 'dark'}
+        >
+          {themeLabel}
+        </button>
         <button className="button" type="button" onClick={() => void openFolder()} disabled={isLoading}>
           {isLoading ? 'Loading...' : 'Open Folder'}
         </button>

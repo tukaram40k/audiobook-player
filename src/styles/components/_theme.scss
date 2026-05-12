@@ -26,6 +26,10 @@
   --shadow-panel: 0 12px 30px rgba(27, 29, 35, 0.08);
   --shadow-button: 0 6px 12px rgba(27, 29, 35, 0.18);
 
+  --modal-backdrop: rgba(27, 29, 35, 0.4);
+  --modal-surface: rgba(255, 255, 255, 0.96);
+  --modal-border: rgba(33, 37, 43, 0.12);
+
   --slider-track: rgba(33, 37, 43, 0.18);
   --slider-fill: var(--color-accent);
   --slider-thumb: var(--color-accent);
@@ -61,6 +65,10 @@
 
   --shadow-panel: 0 6px 14px rgba(0, 0, 0, 0.45);
   --shadow-button: none;
+
+  --modal-backdrop: rgba(0, 0, 0, 0.55);
+  --modal-surface: rgba(32, 36, 44, 0.96);
+  --modal-border: rgba(224, 224, 224, 0.12);
 
   --slider-track: #3a424f;
   --slider-track-border: rgba(224, 224, 224, 0.3);

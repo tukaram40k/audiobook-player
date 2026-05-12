@@ -1,29 +1,29 @@
-$color-bg-1: #e5eee4;
-$color-bg-2: #f6f4e8;
-$color-text: #1d2c20;
-$color-text-muted: #5b6b60;
-$color-panel: #ffffff;
-$color-panel-contrast: #fdfcf7;
-$color-accent: #2f5b43;
-$color-accent-dark: #295039;
-$color-accent-soft: #dcebe0;
-$color-border: #1d2c20;
-$color-shadow: #1f3b2a;
+$color-bg-1: var(--color-bg-1);
+$color-bg-2: var(--color-bg-2);
+$color-text: var(--color-text);
+$color-text-muted: var(--color-text-muted);
+$color-panel: var(--color-panel);
+$color-panel-contrast: var(--color-panel-contrast);
+$color-accent: var(--color-accent);
+$color-accent-dark: var(--color-accent-dark);
+$color-accent-soft: var(--color-accent-soft);
+$color-border: var(--color-border);
+$color-shadow: var(--color-shadow);
 
 $radius-panel: 16px;
 $radius-pill: 999px;
 
-$topbar-bg: rgba($color-bg-2, 0.88);
-$border-subtle: rgba($color-border, 0.12);
-$border-strong: rgba($color-border, 0.25);
+$topbar-bg: var(--topbar-bg);
+$border-subtle: var(--border-subtle);
+$border-strong: var(--border-strong);
 
-$panel-bg: rgba($color-panel, 0.9);
-$panel-bg-soft: rgba($color-panel, 0.7);
-$panel-bg-hover: rgba($color-bg-2, 0.95);
-$panel-bg-active: rgba($color-accent-soft, 0.95);
+$panel-bg: var(--panel-bg);
+$panel-bg-soft: var(--panel-bg-soft);
+$panel-bg-hover: var(--panel-bg-hover);
+$panel-bg-active: var(--panel-bg-active);
 
-$button-ghost-bg: rgba($color-accent, 0.12);
-$button-ghost-hover: rgba($color-accent, 0.2);
+$button-ghost-bg: var(--button-ghost-bg);
+$button-ghost-hover: var(--button-ghost-hover);
 
-$shadow-panel: 0 12px 30px rgba($color-shadow, 0.08);
-$shadow-button: 0 6px 12px rgba($color-shadow, 0.18);
+$shadow-panel: var(--shadow-panel);
+$shadow-button: var(--shadow-button);

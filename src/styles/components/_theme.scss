@@ -1,0 +1,61 @@
+:root {
+  --color-bg-1: #e5eee4;
+  --color-bg-2: #f6f4e8;
+  --color-text: #1d2c20;
+  --color-text-muted: #5b6b60;
+  --color-panel: #ffffff;
+  --color-panel-contrast: #fdfcf7;
+  --color-accent: #2f5b43;
+  --color-accent-dark: #295039;
+  --color-accent-soft: #dcebe0;
+  --color-border: #1d2c20;
+  --color-shadow: #1f3b2a;
+
+  --topbar-bg: rgba(246, 244, 232, 0.88);
+  --border-subtle: rgba(29, 44, 32, 0.12);
+  --border-strong: rgba(29, 44, 32, 0.25);
+
+  --panel-bg: rgba(255, 255, 255, 0.9);
+  --panel-bg-soft: rgba(255, 255, 255, 0.7);
+  --panel-bg-hover: rgba(246, 244, 232, 0.95);
+  --panel-bg-active: rgba(220, 235, 224, 0.95);
+
+  --button-ghost-bg: rgba(47, 91, 67, 0.12);
+  --button-ghost-hover: rgba(47, 91, 67, 0.2);
+
+  --shadow-panel: 0 12px 30px rgba(31, 59, 42, 0.08);
+  --shadow-button: 0 6px 12px rgba(31, 59, 42, 0.18);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --color-bg-1: #0f1412;
+  --color-bg-2: #151d19;
+  --color-text: #e9f1ec;
+  --color-text-muted: #a9b7b0;
+  --color-panel: #1c2521;
+  --color-panel-contrast: #f4f8f5;
+  --color-accent: #6fb792;
+  --color-accent-dark: #5aa882;
+  --color-accent-soft: #24342d;
+  --color-border: #d7e1da;
+  --color-shadow: #000000;
+
+  --topbar-bg: rgba(21, 29, 25, 0.9);
+  --border-subtle: rgba(232, 242, 236, 0.12);
+  --border-strong: rgba(232, 242, 236, 0.25);
+
+  --panel-bg: rgba(28, 37, 33, 0.92);
+  --panel-bg-soft: rgba(28, 37, 33, 0.75);
+  --panel-bg-hover: rgba(36, 49, 42, 0.92);
+  --panel-bg-active: rgba(44, 64, 56, 0.95);
+
+  --button-ghost-bg: rgba(111, 183, 146, 0.18);
+  --button-ghost-hover: rgba(111, 183, 146, 0.28);
+
+  --shadow-panel: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --shadow-button: 0 6px 14px rgba(0, 0, 0, 0.35);
+
+  color-scheme: dark;
+}

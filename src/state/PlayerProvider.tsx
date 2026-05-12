@@ -11,9 +11,14 @@ const RESTART_THRESHOLD_SECONDS = 5
 
 type PlayerProviderProps = PropsWithChildren<{
   api?: PlayerApi
+  autoAdvance?: boolean
 }>
 
-export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps) => {
+export const PlayerProvider = ({
+  children,
+  api = mockApi,
+  autoAdvance = true,
+}: PlayerProviderProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const ensureAudio = useCallback(() => {
     if (!audioRef.current) {
@@ -218,6 +223,11 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
     }
 
     const handleEnded = () => {
+      if (!autoAdvance) {
+        setIsPlaying(false)
+        return
+      }
+
       void moveToAdjacent(1, { autoPlay: true })
     }
 
@@ -234,7 +244,7 @@ export const PlayerProvider = ({ children, api = mockApi }: PlayerProviderProps)
       audio.removeEventListener('pause', handlePause)
       audio.removeEventListener('ended', handleEnded)
     }
-  }, [ensureAudio, moveToAdjacent, persistPosition])
+  }, [autoAdvance, ensureAudio, moveToAdjacent, persistPosition])
 
   const value = useMemo<PlayerContextValue>(
     () => ({

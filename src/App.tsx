@@ -7,21 +7,79 @@ import TrackSidebar from './components/TrackSidebar'
 import { LibraryProvider } from './state/LibraryProvider'
 import { PlayerProvider } from './state/PlayerProvider'
 
-const App = () => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') {
-      return 'light'
+type ThemeMode = 'light' | 'dark'
+type AppSettings = {
+  theme: ThemeMode
+  autoAdvance: boolean
+}
+
+const SETTINGS_STORAGE_KEY = 'audiobook-player.settings'
+
+const getSystemTheme = (): ThemeMode => {
+  if (typeof window === 'undefined') {
+    return 'light'
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+const loadSettings = (): AppSettings => {
+  const fallback: AppSettings = {
+    theme: getSystemTheme(),
+    autoAdvance: true,
+  }
+
+  if (typeof window === 'undefined') {
+    return fallback
+  }
+
+  try {
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
+    if (!raw) {
+      return fallback
     }
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
+    const parsed = JSON.parse(raw) as Partial<AppSettings>
+    return {
+      theme: parsed.theme === 'dark' || parsed.theme === 'light' ? parsed.theme : fallback.theme,
+      autoAdvance: typeof parsed.autoAdvance === 'boolean' ? parsed.autoAdvance : fallback.autoAdvance,
+    }
+  } catch {
+    return fallback
+  }
+}
+
+const App = () => {
+  const [settings, setSettings] = useState<AppSettings>(() => loadSettings())
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
-  }, [theme])
+    document.documentElement.dataset.theme = settings.theme
+  }, [settings.theme])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
+    } catch {
+      // Ignore storage failures (private mode, quota, etc.).
+    }
+  }, [settings])
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+    setSettings((prev) => ({
+      ...prev,
+      theme: prev.theme === 'dark' ? 'light' : 'dark',
+    }))
+  }
+
+  const toggleAutoAdvance = () => {
+    setSettings((prev) => ({
+      ...prev,
+      autoAdvance: !prev.autoAdvance,
+    }))
   }
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -36,7 +94,7 @@ const App = () => {
 
   return (
     <LibraryProvider>
-      <PlayerProvider>
+      <PlayerProvider autoAdvance={settings.autoAdvance}>
         <div className="app-shell">
           <TopBar onOpenSettings={openSettings} />
           <div className="app-body">
@@ -48,8 +106,10 @@ const App = () => {
         <SettingsModal
           isOpen={isSettingsOpen}
           onClose={closeSettings}
-          theme={theme}
+          theme={settings.theme}
           onToggleTheme={toggleTheme}
+          autoAdvance={settings.autoAdvance}
+          onToggleAutoAdvance={toggleAutoAdvance}
         />
       </PlayerProvider>
     </LibraryProvider>

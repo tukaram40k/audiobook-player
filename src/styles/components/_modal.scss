@@ -48,6 +48,14 @@
   }
 }
 
+.modal__section-title {
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+  // text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $color-text-muted;
+}
+
 .modal__row {
   display: flex;
   align-items: center;

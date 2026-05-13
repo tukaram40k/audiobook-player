@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename)
 
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.m4b', '.m4a', '.aac', '.flac', '.ogg', '.wav'])
 const AUDIO_PROTOCOL = 'audiobook'
+const AUDIO_LOG_LIMIT = 12
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -57,7 +58,7 @@ const walkFiles = async (folderPath: string, results: string[]) => {
 }
 
 const toAudioSrc = (filePath: string) => {
-  const encodedPath = encodeURIComponent(filePath)
+  const encodedPath = Buffer.from(filePath, 'utf8').toString('base64url')
   return `${AUDIO_PROTOCOL}://local?path=${encodedPath}`
 }
 
@@ -76,6 +77,11 @@ const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
       durationSeconds: null,
     }
   })
+
+  if (tracks.length > 0) {
+    const sample = tracks.slice(0, AUDIO_LOG_LIMIT).map((track) => track.src)
+    console.log(`[library] ${path.basename(bookFolderPath)}: sample audio srcs`, sample)
+  }
 
   const title = path.basename(bookFolderPath)
   return {
@@ -113,12 +119,20 @@ const createWindow = () => {
         return
       }
 
-      let decodedPath = decodeURIComponent(encodedPath)
+      let decodedPath = Buffer.from(encodedPath, 'base64url').toString('utf8')
       if (process.platform === 'win32') {
         decodedPath = decodedPath.replace(/^\/+/, '')
       }
 
-      callback({ path: decodedPath })
+      fs
+        .access(decodedPath)
+        .then(() => {
+          callback({ path: decodedPath })
+        })
+        .catch((error) => {
+          console.error('[library] file access failed', decodedPath, error)
+          callback({ error: -6 })
+        })
     } catch (error) {
       console.error('[library] failed to resolve audio path', error)
       callback({ error: -6 })

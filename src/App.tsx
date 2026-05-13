@@ -4,6 +4,7 @@ import PlayerView from './components/PlayerView'
 import SettingsModal from './components/SettingsModal'
 import TopBar from './components/TopBar'
 import TrackSidebar from './components/TrackSidebar'
+import { electronApi, mockApi } from './api'
 import { LibraryProvider } from './state/LibraryProvider'
 import { PlayerProvider } from './state/PlayerProvider'
 
@@ -51,6 +52,7 @@ const loadSettings = (): AppSettings => {
 
 const App = () => {
   const [settings, setSettings] = useState<AppSettings>(() => loadSettings())
+  const api = typeof window !== 'undefined' && window.electronApi ? electronApi : mockApi
 
   useEffect(() => {
     document.documentElement.dataset.theme = settings.theme
@@ -93,8 +95,8 @@ const App = () => {
   }
 
   return (
-    <LibraryProvider>
-      <PlayerProvider autoAdvance={settings.autoAdvance}>
+    <LibraryProvider api={api}>
+      <PlayerProvider api={api} autoAdvance={settings.autoAdvance}>
         <div className="app-shell">
           <TopBar onOpenSettings={openSettings} />
           <div className="app-body">

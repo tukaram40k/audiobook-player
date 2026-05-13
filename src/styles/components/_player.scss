@@ -104,4 +104,21 @@
     font-size: 0.85rem;
     color: $color-text-muted;
   }
+
+  .player-cover {
+    width: min(280px, 100%);
+    aspect-ratio: 1 / 1;
+    border-radius: $radius-panel;
+    overflow: hidden;
+    border: 1px solid $border-subtle;
+    background: $panel-bg-soft;
+    display: grid;
+    place-items: center;
+  }
+
+  .player-cover__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }

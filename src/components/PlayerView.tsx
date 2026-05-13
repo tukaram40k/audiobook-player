@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { usePlayer } from '../state/usePlayer'
+import { useLibrary } from '../state/useLibrary'
 
 const formatTime = (value: number) => {
   if (!Number.isFinite(value)) {
@@ -23,12 +24,14 @@ const PlayerView = () => {
     previous,
     seek,
   } = usePlayer()
+  const { currentBook } = useLibrary()
 
   const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : 0
   const clampedTime = Math.min(currentTime, safeDuration)
   const sliderMax = safeDuration > 0 ? safeDuration : 1
   const progress = safeDuration > 0 ? (clampedTime / safeDuration) * 100 : 0
   const sliderStyle = { '--seek-progress': `${progress}%` } as CSSProperties
+  const coverUrl = currentBook?.coverUrl || '/cover-placeholder.png'
 
   return (
     <section className="panel player-view">
@@ -62,6 +65,13 @@ const PlayerView = () => {
           <span>{formatTime(clampedTime)}</span>
           <span>{formatTime(safeDuration)}</span>
         </div>
+      </div>
+      <div className="player-cover">
+        <img
+          src={coverUrl}
+          alt={currentBook ? `${currentBook.title} cover` : 'Cover placeholder'}
+          className="player-cover__image"
+        />
       </div>
     </section>
   )

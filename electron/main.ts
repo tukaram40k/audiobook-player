@@ -1,5 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, protocol } from 'electron'
 import { promises as fs } from 'fs'
+import iconv from 'iconv-lite'
 import { parseFile } from 'music-metadata'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -66,6 +67,43 @@ const toAudioSrc = (filePath: string) => {
   return `${AUDIO_PROTOCOL}://local?path=${encodedPath}`
 }
 
+const countCyrillic = (value: string) => {
+  return (value.match(/[\u0400-\u04FF]/g) ?? []).length
+}
+
+const countReplacement = (value: string) => {
+  return (value.match(/\uFFFD/g) ?? []).length
+}
+
+const scoreText = (value: string) => {
+  return countCyrillic(value) * 2 - countReplacement(value)
+}
+
+const normalizeMetadataText = (value?: string) => {
+  if (!value) {
+    return value
+  }
+
+  const baseScore = scoreText(value)
+  const rawBytes = Buffer.from(value, 'latin1')
+  const utf8Fix = rawBytes.toString('utf8')
+  const cp1251Fix = iconv.decode(rawBytes, 'win1251')
+
+  const candidates = [value, utf8Fix, cp1251Fix]
+  let best = value
+  let bestScore = baseScore
+
+  for (const candidate of candidates.slice(1)) {
+    const score = scoreText(candidate)
+    if (score > bestScore) {
+      best = candidate
+      bestScore = score
+    }
+  }
+
+  return best
+}
+
 const readBookMetadata = async (audioPath: string | null) => {
   if (!audioPath) {
     return {}
@@ -73,8 +111,8 @@ const readBookMetadata = async (audioPath: string | null) => {
 
   try {
     const metadata = await parseFile(audioPath)
-    const author = metadata.common.artist ?? metadata.common.albumartist
-    const narrator = metadata.common.composer?.[0]
+    const author = normalizeMetadataText(metadata.common.artist ?? metadata.common.albumartist)
+    const narrator = normalizeMetadataText(metadata.common.composer?.[0])
     const picture = metadata.common.picture?.[0]
 
     const coverUrl = picture

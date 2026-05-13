@@ -1,5 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, protocol } from 'electron'
 import { promises as fs } from 'fs'
+import { parseFile } from 'music-metadata'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -33,6 +34,9 @@ type TrackInfo = {
 type BookInfo = {
   id: string
   title: string
+  author?: string
+  narrator?: string
+  coverUrl?: string
   folderPath: string
   tracks: TrackInfo[]
 }
@@ -62,6 +66,32 @@ const toAudioSrc = (filePath: string) => {
   return `${AUDIO_PROTOCOL}://local?path=${encodedPath}`
 }
 
+const readBookMetadata = async (audioPath: string | null) => {
+  if (!audioPath) {
+    return {}
+  }
+
+  try {
+    const metadata = await parseFile(audioPath)
+    const author = metadata.common.artist ?? metadata.common.albumartist
+    const narrator = metadata.common.composer?.[0]
+    const picture = metadata.common.picture?.[0]
+
+    const coverUrl = picture
+      ? `data:${picture.format || 'image/jpeg'};base64,${Buffer.from(picture.data).toString('base64')}`
+      : undefined
+
+    return {
+      author,
+      narrator,
+      coverUrl,
+    }
+  } catch (error) {
+    console.warn('[library] metadata read failed', audioPath, error)
+    return {}
+  }
+}
+
 const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
   const filePaths: string[] = []
   await walkFiles(bookFolderPath, filePaths)
@@ -78,6 +108,8 @@ const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
     }
   })
 
+  const metadata = await readBookMetadata(sortedFiles[0] ?? null)
+
   if (tracks.length > 0) {
     const sample = tracks.slice(0, AUDIO_LOG_LIMIT).map((track) => track.src)
     console.log(`[library] ${path.basename(bookFolderPath)}: sample audio srcs`, sample)
@@ -87,6 +119,9 @@ const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
   return {
     id: title,
     title,
+    author: metadata.author,
+    narrator: metadata.narrator,
+    coverUrl: metadata.coverUrl,
     folderPath: bookFolderPath,
     tracks,
   }

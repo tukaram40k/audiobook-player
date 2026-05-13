@@ -11,7 +11,7 @@ export default defineConfig({
         vite: {
           build: {
             rollupOptions: {
-              external: ['music-metadata'],
+              external: ['iconv-lite', 'music-metadata'],
             },
           },
         },

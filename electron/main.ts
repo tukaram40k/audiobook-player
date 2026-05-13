@@ -1,17 +1,32 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, net, protocol } from 'electron'
 import { promises as fs } from 'fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.m4b', '.m4a', '.aac', '.flac', '.ogg', '.wav'])
+const AUDIO_PROTOCOL = 'audiobook'
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: AUDIO_PROTOCOL,
+    privileges: {
+      standard: true,
+      secure: true,
+      stream: true,
+      supportFetchAPI: true,
+    },
+  },
+])
 
 type TrackInfo = {
   id: string
   title: string
-  filePath: string
+  src: string
+  trackNumber: number
+  durationSeconds: number | null
 }
 
 type BookInfo = {
@@ -41,6 +56,11 @@ const walkFiles = async (folderPath: string, results: string[]) => {
   }
 }
 
+const toAudioSrc = (filePath: string) => {
+  const encodedPath = encodeURIComponent(filePath)
+  return `${AUDIO_PROTOCOL}://local?path=${encodedPath}`
+}
+
 const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
   const filePaths: string[] = []
   await walkFiles(bookFolderPath, filePaths)
@@ -51,7 +71,9 @@ const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
     return {
       id: `${path.basename(bookFolderPath)}-${index + 1}`,
       title,
-      filePath,
+      src: toAudioSrc(filePath),
+      trackNumber: index + 1,
+      durationSeconds: null,
     }
   })
 
@@ -82,6 +104,27 @@ const readLibrary = async (libraryPath: string): Promise<BookInfo[]> => {
 let mainWindow: BrowserWindow | null = null
 
 const createWindow = () => {
+  protocol.handle(AUDIO_PROTOCOL, async (request) => {
+    try {
+      const parsedUrl = new URL(request.url)
+      const encodedPath = parsedUrl.searchParams.get('path')
+      if (!encodedPath) {
+        return new Response('Missing path', { status: 400 })
+      }
+
+      let decodedPath = decodeURIComponent(encodedPath)
+      if (process.platform === 'win32') {
+        decodedPath = decodedPath.replace(/^\/+/, '')
+      }
+
+      const fileUrl = pathToFileURL(decodedPath).toString()
+      return net.fetch(fileUrl)
+    } catch (error) {
+      console.error('[library] failed to resolve audio path', error)
+      return new Response('Not found', { status: 404 })
+    }
+  })
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,

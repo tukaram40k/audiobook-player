@@ -231,11 +231,21 @@ export const PlayerProvider = ({
       void moveToAdjacent(1, { autoPlay: true })
     }
 
+    const handleError = () => {
+      const error = audio.error
+      console.error('[player] audio error', {
+        code: error?.code,
+        message: error?.message,
+        src: audio.src,
+      })
+    }
+
     audio.addEventListener('loadedmetadata', handleLoaded)
     audio.addEventListener('timeupdate', handleTimeUpdate)
     audio.addEventListener('play', handlePlay)
     audio.addEventListener('pause', handlePause)
     audio.addEventListener('ended', handleEnded)
+    audio.addEventListener('error', handleError)
 
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoaded)
@@ -243,6 +253,7 @@ export const PlayerProvider = ({
       audio.removeEventListener('play', handlePlay)
       audio.removeEventListener('pause', handlePause)
       audio.removeEventListener('ended', handleEnded)
+      audio.removeEventListener('error', handleError)
     }
   }, [autoAdvance, ensureAudio, moveToAdjacent, persistPosition])
 

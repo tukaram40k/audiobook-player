@@ -1,13 +1,14 @@
 @use './variables' as *;
 
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .app-body {
   flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr) 260px;
   gap: 1rem;

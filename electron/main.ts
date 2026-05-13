@@ -153,7 +153,7 @@ const readBook = async (bookFolderPath: string): Promise<BookInfo> => {
     console.log(`[library] ${path.basename(bookFolderPath)}: sample audio srcs`, sample)
   }
 
-  const title = path.basename(bookFolderPath)
+  const title = path.basename(bookFolderPath).replace(/_/g, ' ')
   return {
     id: title,
     title,

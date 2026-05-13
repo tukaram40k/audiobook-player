@@ -1,7 +1,7 @@
-import { app, BrowserWindow, dialog, ipcMain, net, protocol } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, protocol } from 'electron'
 import { promises as fs } from 'fs'
 import path from 'path'
-import { fileURLToPath, pathToFileURL } from 'url'
+import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -104,12 +104,13 @@ const readLibrary = async (libraryPath: string): Promise<BookInfo[]> => {
 let mainWindow: BrowserWindow | null = null
 
 const createWindow = () => {
-  protocol.handle(AUDIO_PROTOCOL, async (request) => {
+  protocol.registerFileProtocol(AUDIO_PROTOCOL, (request, callback) => {
     try {
       const parsedUrl = new URL(request.url)
       const encodedPath = parsedUrl.searchParams.get('path')
       if (!encodedPath) {
-        return new Response('Missing path', { status: 400 })
+        callback({ error: -6 })
+        return
       }
 
       let decodedPath = decodeURIComponent(encodedPath)
@@ -117,11 +118,10 @@ const createWindow = () => {
         decodedPath = decodedPath.replace(/^\/+/, '')
       }
 
-      const fileUrl = pathToFileURL(decodedPath).toString()
-      return net.fetch(fileUrl)
+      callback({ path: decodedPath })
     } catch (error) {
       console.error('[library] failed to resolve audio path', error)
-      return new Response('Not found', { status: 404 })
+      callback({ error: -6 })
     }
   })
 

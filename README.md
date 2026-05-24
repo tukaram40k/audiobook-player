@@ -10,6 +10,10 @@ A cross-platform desktop audiobook player built with React, Vite, and Electron. 
 - Light/dark theme toggle
 - Playback auto-advance
 
+## Demo
+
+![demo](docs/img1.png)
+
 ## Library Layout
 
 The app expects one **library folder**, with **top-level subfolders** for each book. Subfolders inside a book are treated as part of that same book.
